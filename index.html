@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Analysis AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+            --color-dark: #1a1a1a;
+            --color-light: #ffffff;
+            --color-grey: #666;
+            --color-border: #ddd;
+            --color-bg-light: #f8f8f8;
+            --color-accent-high: #22c55e;
+            --color-accent-medium: #f59e0b;
+            --color-accent-low: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-light);
+            color: var(--color-dark);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* --- Header & Masthead --- */
+        .masthead {
+            text-align: center;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--color-dark);
+        }
+
+        .page-title {
+            font-family: var(--font-serif);
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: var(--color-grey);
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .date-line {
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- Input Form --- */
+        .input-section {
+            background: var(--color-bg-light);
+            border: 1px solid var(--color-border);
+            padding: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .input-title {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .input-subtitle {
+            color: var(--color-grey);
+            margin-bottom: 30px;
+        }
+
+        .input-form {
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 2px solid var(--color-dark);
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            font-size: 1rem;
+            font-family: var(--font-sans);
+            outline: none;
+        }
+
+        .analyze-btn {
+            padding: 15px 30px;
+            background: var(--color-dark);
+            color: var(--color-light);
+            border: none;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .analyze-btn:hover {
+            background: #333;
+        }
+
+        /* --- Flash Messages --- */
+        .flash-message {
+            background: var(--color-accent-low);
+            color: var(--color-light);
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* --- Results Layout --- */
+        .results-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 50px;
+        }
+
+        .main-content {
+            border-right: 1px solid var(--color-border);
+            padding-right: 30px;
+        }
+
+        .article-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--color-dark);
+        }
+
+        .article-title {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .article-meta {
+            font-size: 0.9rem;
+            color: var(--color-grey);
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item .meta-label {
+            font-weight: 600;
+            color: var(--color-dark);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .article-image {
+            width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border: 1px solid var(--color-border);
+        }
+
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--color-dark);
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+
+        .summary-content {
+            background: var(--color-bg-light);
+            padding: 25px;
+            border-left: 3px solid var(--color-dark);
+            font-size: 1.1rem;
+            white-space: pre-wrap; /* Preserves formatting like bullet points */
+        }
+        
+        /* --- Sidebar --- */
+        .sidebar-card {
+            margin-bottom: 30px;
+            border: 1px solid var(--color-border);
+        }
+
+        .sidebar-title {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            color: var(--color-light);
+            background: var(--color-dark);
+            padding: 12px 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .sidebar-content {
+            padding: 20px;
+        }
+
+        .authenticity-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .authenticity-high { border-left: 4px solid var(--color-accent-high); }
+        .authenticity-medium { border-left: 4px solid var(--color-accent-medium); }
+        .authenticity-low { border-left: 4px solid var(--color-accent-low); }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .analysis-item .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--color-grey);
+            margin-bottom: 5px;
+        }
+        .analysis-item .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .keywords-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .keyword-tag {
+            background: var(--color-bg-light);
+            border: 1px solid var(--color-border);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .related-articles-list {
+            list-style: none;
+        }
+        .related-article-item {
+            border-bottom: 1px solid #eee;
+        }
+        .related-article-link {
+            display: block;
+            padding: 12px 5px;
+            text-decoration: none;
+            color: var(--color-dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .related-article-link:hover {
+            background: var(--color-bg-light);
+            text-decoration: underline;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 800px) {
+            .results-layout {
+                grid-template-columns: 1fr;
+            }
+            .main-content {
+                border-right: none;
+                padding-right: 0;
+                margin-bottom: 20px;
+            }
+            .page-title {
+                font-size: 2.5rem;
+            }
+            .article-title {
+                font-size: 2rem;
+            }
+        }
+        @media (max-width: 600px) {
+            .input-form {
+                flex-direction: column;
+            }
+             .url-input {
+                border-bottom: 2px solid var(--color-dark);
+            }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="masthead">
+            <h1 class="page-title">SummarAIze</h1>
+            <p class="tagline">Intelligent Verification & Summarization Engine</p>
+            <div class="date-line" id="currentDate"></div>
+        </header>
+
+        <section class="input-section">
+            <h2 class="input-title">Analyze an Article</h2>
+            <p class="input-subtitle">Enter a news URL for an AI-powered breakdown and summary.</p>
+            <form class="input-form" action="/" method="POST">
+                <input type="url" name="url" class="url-input" placeholder="Enter news article URL..." required>
+                <button type="submit" class="analyze-btn">Analyze</button>
+            </form>
+        </section>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if results %}
+        <div class="results-layout">
+            
+            <main class="main-content">
+                <header class="article-header">
+                    <h1 class="article-title">{{ results.title }}</h1>
+                    <div class="article-meta">
+                        <div class="meta-item"><span class="meta-label">By:</span> {{ results.authors }}</div>
+                        <div class="meta-item"><span class="meta-label">Published:</span> {{ results.publish_date }}</div>
+                        <div class="meta-item"><span class="meta-label">Read Time:</span> {{ results.reading_time }}</div>
+                    </div>
+                    {% if results.top_image %}
+                        <img src="{{ results.top_image }}" alt="Article image for {{ results.title }}" class="article-image">
+                    {% endif %}
+                </header>
+                
+                <!-- Abstractive Summary -->
+                <section class="summary-section">
+                    <h2 class="section-title">Abstractive Summary</h2>
+                    <div class="summary-content">{{ results.abstractive_summary }}</div>
+                </section>
+
+                <!-- Extractive Summary -->
+                <section class="summary-section">
+                    <h2 class="section-title">Extractive Summary</h2>
+                    <div class="summary-content">{{ results.extractive_summary }}</div>
+                </section>
+            </main>
+            
+            <aside class="sidebar">
+                
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">Verification</h3>
+                    <div class="sidebar-content 
+                        {% if 'High' in results.authenticity %}authenticity-high
+                        {% elif 'Medium' in results.authenticity %}authenticity-medium
+                        {% elif 'Low' in results.authenticity %}authenticity-low
+                        {% endif %}">
+                        <p class="authenticity-text">{{ results.authenticity }}</p>
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">Article Tone</h3>
+                    <div class="sidebar-content">
+                        <div class="analysis-grid">
+                            <div class="analysis-item">
+                                <div class="label">Sentiment</div>
+                                <div class="value">{{ results.sentiment }}</div>
+                            </div>
+                            <div class="analysis-item">
+                                <div class="label">Subjectivity</div>
+                                <div class="value">{{ results.subjectivity }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if results.keywords %}
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">Keywords</h3>
+                    <div class="sidebar-content">
+                        <div class="keywords-list">
+                            {% for keyword in results.keywords %}
+                                <a href="https://www.google.com/search?q={{ keyword|urlencode }}" target="_blank" class="keyword-tag">
+                                <i class="fas fa-search"></i> {{ keyword }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if results.related_articles %}
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">Related Coverage</h3>
+                    <div class="sidebar-content">
+                        <ul class="related-articles-list">
+                            {% for link in results.related_articles %}
+                                <li class="related-article-item">
+                                    <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="related-article-link">
+                                        {{ link.source }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+
+            </aside>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Set the current date in the masthead
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateElement = document.getElementById('currentDate');
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            dateElement.textContent = now.toLocaleDateString('en-US', options).toUpperCase();
+        });
+    </script>
+</body>
+</html>
