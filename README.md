@@ -68,7 +68,6 @@ pip install -r requirements.txt
 Create a **.env** file in the project root:
 
 ```ini
-FLASK_SECRET_KEY=your_secret_key
 GOOGLE_API_KEY=your_google_api_key
 ```
 
